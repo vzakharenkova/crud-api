@@ -158,4 +158,5 @@ dist
 .idea/httpRequests
 
 # Build
+build
 build/**/*
