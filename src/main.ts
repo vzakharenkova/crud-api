@@ -1,6 +1,10 @@
 import * as dotenv from 'dotenv';
 import { createServer } from 'http';
+import { deleteFn } from './modules/delete.js';
 import { get } from './modules/get.js';
+import { post } from './modules/post.js';
+import { put } from './modules/put.js';
+import { users } from './modules/users.js';
 
 dotenv.config();
 
@@ -17,12 +21,15 @@ server
         break;
       }
       case 'POST': {
+        post(req, res);
         break;
       }
       case 'PUT': {
+        put(req, res);
         break;
       }
       case 'DELETE': {
+        deleteFn(req, res);
         break;
       }
       default:
