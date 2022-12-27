@@ -1,11 +1,4 @@
-import { generateUUID } from '../utils/uuid.js';
-
-interface User {
-  id: string;
-  username: string;
-  age: number;
-  hobbies: string[] | [];
-}
+import { User, users } from '../data/users.js';
 
 export function isNewUser(arg: any): arg is Omit<User, 'id'> {
   return (
@@ -36,17 +29,15 @@ export function isUserProps(arg: { [key: string]: any }): boolean {
   );
 }
 
-export const users: User[] = [
-  {
-    id: 's7fniscoso',
-    username: 'Vika',
-    age: 23,
-    hobbies: ['programming'],
-  },
-  {
-    id: generateUUID(),
-    username: 'Tom',
-    age: 30,
-    hobbies: ['swimming'],
-  },
-];
+export function findUserIndex(userId: string) {
+  let index: number | undefined;
+  users.find((user, i) => {
+    if (user.id === userId) {
+      index = i;
+      return true;
+    }
+    return false;
+  });
+
+  return index;
+}

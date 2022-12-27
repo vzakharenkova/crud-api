@@ -1,6 +1,9 @@
 import http from 'http';
+
+import { users } from '../data/users.js';
+import { invalidDataErrorHandler, invalidRequestUrlErrorHandler } from '../utils/errors.js';
+import { isNewUser } from '../utils/user.js';
 import { generateUUID } from '../utils/uuid.js';
-import { isNewUser, users } from './users.js';
 
 export function post(
   req: http.IncomingMessage,
@@ -8,14 +11,19 @@ export function post(
     req: http.IncomingMessage;
   },
 ) {
-  if (req.url === '/api/users') {
-    const data: Buffer[] = [];
+  if (req.url !== '/api/users') {
+    invalidRequestUrlErrorHandler(req, res);
 
-    req.on('data', (chunk) => {
+    return;
+  }
+
+  const data: Buffer[] = [];
+
+  req
+    .on('data', (chunk) => {
       data.push(chunk);
-    });
-
-    req.on('end', () => {
+    })
+    .on('end', () => {
       if (data.length) {
         const recievedData: any = JSON.parse(Buffer.concat(data).toString());
 
@@ -26,16 +34,10 @@ export function post(
           res.writeHead(201, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify(newUser));
         } else {
-          res.writeHead(400, 'PASSED DATA IS NOT VALID!', { 'Content-Type': 'text/plain' });
-          res.end(res.statusMessage);
+          invalidDataErrorHandler(res, false);
         }
       } else {
-        res.writeHead(400, 'DATA IS NOT PASSED!', { 'Content-Type': 'text/plain' });
-        res.end(res.statusMessage);
+        invalidDataErrorHandler(res, true);
       }
     });
-  } else {
-    res.writeHead(500, `CANNOT POST ${req.url}`, { 'Content-Type': 'text/plain' });
-    res.end(res.statusMessage);
-  }
 }

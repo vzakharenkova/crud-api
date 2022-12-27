@@ -1,6 +1,13 @@
 import http from 'http';
+
+import { users } from '../data/users.js';
+import {
+  invalidRequestUrlErrorHandler,
+  invalidUserIdErrorHandler,
+  notFoundErrorHandler,
+} from '../utils/errors.js';
+import { findUserIndex } from '../utils/user.js';
 import { checkIfValidUUID } from '../utils/uuid.js';
-import { users } from './users.js';
 
 export function deleteFn(
   req: http.IncomingMessage,
@@ -8,33 +15,25 @@ export function deleteFn(
     req: http.IncomingMessage;
   },
 ) {
-  if (req.url?.startsWith('/api/users/') && req.url.split('/').length === 4) {
-    const id = req.url?.split('/')[3];
+  if (!(req.url?.startsWith('/api/users/') && req.url.split('/').length === 4)) {
+    invalidRequestUrlErrorHandler(req, res);
+  }
 
-    if (!checkIfValidUUID(<string>id)) {
-      res.writeHead(400, `ID ${id} IS NOT VALID!`, { 'Content-Type': 'text/plain' });
-      res.end(res.statusMessage);
-    } else {
-      let index: number | undefined;
-      users.find((user, i) => {
-        if (user.id === id) {
-          index = i;
-          return true;
-        }
-        return false;
-      });
+  const id = <string>req.url?.split('/')[3];
 
-      if (index) {
-        users.splice(index, 1);
-        res.writeHead(204, { 'Content-Type': 'text/plain' });
-        res.end(`USER WITH ID ${id} is successfully deleted!`);
-      } else {
-        res.writeHead(404, `USER WITH ID ${id} IS NOT FOUND!`, { 'Content-Type': 'text/plain' });
-        res.end(res.statusMessage);
-      }
-    }
+  if (!checkIfValidUUID(<string>id)) {
+    invalidUserIdErrorHandler(res, id);
+
+    return;
+  }
+
+  const userIndex = findUserIndex(id);
+
+  if (userIndex) {
+    users.splice(userIndex, 1);
+    res.writeHead(204, { 'Content-Type': 'text/plain' });
+    res.end(`USER WITH ID ${id} is successfully deleted!`);
   } else {
-    res.writeHead(500, `CANNOT DELETE ${req.url}`, { 'Content-Type': 'text/plain' });
-    res.end(res.statusMessage);
+    notFoundErrorHandler(res, id);
   }
 }

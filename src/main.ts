@@ -4,7 +4,6 @@ import { deleteFn } from './modules/delete.js';
 import { get } from './modules/get.js';
 import { post } from './modules/post.js';
 import { put } from './modules/put.js';
-import { users } from './modules/users.js';
 
 dotenv.config();
 
