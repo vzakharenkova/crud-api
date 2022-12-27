@@ -18,6 +18,24 @@ export function isNewUser(arg: any): arg is Omit<User, 'id'> {
   );
 }
 
+export function isUserProps(arg: { [key: string]: any }): boolean {
+  const keys = Object.keys(arg);
+
+  return (
+    arg &&
+    Object.keys(arg).length <= 3 &&
+    keys.every(
+      (key) =>
+        (key === 'username' && typeof arg[key] === 'string') ||
+        (key === 'age' && typeof arg[key] === 'number') ||
+        (key === 'hobbies' &&
+          Array.isArray(arg.hobbies) &&
+          (arg.hobbies.every((hobby: any) => typeof hobby === 'string') ||
+            arg.hobbies.length === 0)),
+    )
+  );
+}
+
 export const users: User[] = [
   {
     id: 's7fniscoso',
