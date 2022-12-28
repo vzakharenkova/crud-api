@@ -9,12 +9,6 @@ export interface User {
 
 export const users: User[] = [
   {
-    id: 's7fniscoso',
-    username: 'Vika',
-    age: 23,
-    hobbies: ['programming'],
-  },
-  {
     id: generateUUID(),
     username: 'Tom',
     age: 30,

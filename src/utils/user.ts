@@ -1,9 +1,22 @@
 import { User, users } from '../data/users.js';
+import { checkIfValidUUID } from './uuid.js';
 
 export function isNewUser(arg: any): arg is Omit<User, 'id'> {
   return (
     arg &&
     Object.keys(arg).length === 3 &&
+    typeof arg.username === 'string' &&
+    typeof arg.age === 'number' &&
+    Array.isArray(arg.hobbies) &&
+    (arg.hobbies.every((hobby: any) => typeof hobby === 'string') || arg.hobbies.length === 0)
+  );
+}
+
+export function isUser(arg: any): arg is User {
+  return (
+    arg &&
+    Object.keys(arg).length === 4 &&
+    checkIfValidUUID(arg.id) &&
     typeof arg.username === 'string' &&
     typeof arg.age === 'number' &&
     Array.isArray(arg.hobbies) &&
