@@ -14,26 +14,31 @@ const HOST = process.env.HOST || 'localhost';
 
 server
   .on('request', (req, res) => {
-    switch (req.method) {
-      case 'GET': {
-        get(req, res);
-        break;
+    try {
+      switch (req.method) {
+        case 'GET': {
+          get(req, res);
+          break;
+        }
+        case 'POST': {
+          post(req, res);
+          break;
+        }
+        case 'PUT': {
+          put(req, res);
+          break;
+        }
+        case 'DELETE': {
+          deleteFn(req, res);
+          break;
+        }
+        default:
+          res.writeHead(400, 'No Response', { 'Content-Type': 'text/plain' });
+          res.end(res.statusMessage);
       }
-      case 'POST': {
-        post(req, res);
-        break;
-      }
-      case 'PUT': {
-        put(req, res);
-        break;
-      }
-      case 'DELETE': {
-        deleteFn(req, res);
-        break;
-      }
-      default:
-        res.writeHead(400, 'No Response', { 'Content-Type': 'text/plain' });
-        res.end(res.statusMessage);
+    } catch {
+      res.writeHead(500, 'Smth went wrong! Please try again!', { 'Content-Type': 'text/plain' });
+      res.end(res.statusMessage);
     }
   })
   .on('error', (error) => console.log(error.message))

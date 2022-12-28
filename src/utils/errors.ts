@@ -44,6 +44,6 @@ export function invalidRequestUrlErrorHandler(
     req: http.IncomingMessage;
   },
 ) {
-  res.writeHead(500, `CANNOT ${req.method} ${req.url}`, { 'Content-Type': 'text/plain' });
+  res.writeHead(404, `CANNOT ${req.method} ${req.url}`, { 'Content-Type': 'text/plain' });
   res.end(res.statusMessage);
 }
