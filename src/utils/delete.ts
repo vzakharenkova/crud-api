@@ -5,9 +5,9 @@ import {
   invalidRequestUrlErrorHandler,
   invalidUserIdErrorHandler,
   notFoundErrorHandler,
-} from '../utils/errors.js';
-import { findUserIndex } from '../utils/user.js';
-import { checkIfValidUUID } from '../utils/uuid.js';
+} from './errors.js';
+import { findUserIndex } from './user.js';
+import { checkIfValidUUID } from './uuid.js';
 
 export function deleteFn(
   req: http.IncomingMessage,

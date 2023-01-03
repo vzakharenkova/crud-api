@@ -1,9 +1,9 @@
 import http from 'http';
 
 import { users } from '../data/users.js';
-import { invalidDataErrorHandler, invalidRequestUrlErrorHandler } from '../utils/errors.js';
-import { isNewUser } from '../utils/user.js';
-import { generateUUID } from '../utils/uuid.js';
+import { invalidDataErrorHandler, invalidRequestUrlErrorHandler } from './errors.js';
+import { isNewUser } from './user.js';
+import { generateUUID } from './uuid.js';
 
 export function post(
   req: http.IncomingMessage,

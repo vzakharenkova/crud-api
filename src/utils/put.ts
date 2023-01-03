@@ -6,9 +6,9 @@ import {
   invalidRequestUrlErrorHandler,
   invalidUserIdErrorHandler,
   notFoundErrorHandler,
-} from '../utils/errors.js';
-import { findUserIndex, isUserProps } from '../utils/user.js';
-import { checkIfValidUUID } from '../utils/uuid.js';
+} from './errors.js';
+import { findUserIndex, isUserProps } from './user.js';
+import { checkIfValidUUID } from './uuid.js';
 
 export function put(
   req: http.IncomingMessage,
