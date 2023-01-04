@@ -1,5 +1,3 @@
-import { generateUUID } from '../utils/uuid.js';
-
 export interface User {
   id: string;
   username: string;
