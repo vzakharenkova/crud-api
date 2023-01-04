@@ -1,5 +1,7 @@
 import { createServer } from 'http';
+import { users } from '../data/users.js';
 
+import { createLoadBalancer } from './loadBalancer.js';
 import { ServerService } from './serverService.js';
 
 const HOST = process.env.HOST || 'localhost';
@@ -9,6 +11,13 @@ export function createNewServer(port: number) {
 
   server
     .on('request', (req, res) => {
+      if (process.env.NODE_ENV === 'multi' && port === Number(process.env.PORT)) {
+        const db = users;
+        createLoadBalancer(req, res);
+
+        return;
+      }
+
       const serverService = new ServerService(req, res);
 
       try {
@@ -31,10 +40,12 @@ export function createNewServer(port: number) {
           }
           default:
             res.writeHead(400, 'No Response', { 'Content-Type': 'text/plain' });
+
             res.end(res.statusMessage);
         }
       } catch {
         res.writeHead(500, 'Smth went wrong! Please try again!', { 'Content-Type': 'text/plain' });
+
         res.end(res.statusMessage);
       }
     })
