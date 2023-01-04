@@ -11,33 +11,40 @@ export function post(
     req: http.IncomingMessage;
   },
 ) {
-  if (req.url !== '/api/users') {
-    invalidRequestUrlErrorHandler(req, res);
+  if (req.url === '/api/users' || (process.env.NODE_ENV === 'multi' && req.url === '/api')) {
+    const data: Buffer[] = [];
 
-    return;
-  }
+    req
+      .on('data', (chunk) => {
+        data.push(chunk);
+      })
+      .on('end', () => {
+        if (data.length) {
+          let recievedData: any;
 
-  const data: Buffer[] = [];
+          try {
+            recievedData = JSON.parse(Buffer.concat(data).toString());
+          } catch {
+            invalidDataErrorHandler(res, false);
 
-  req
-    .on('data', (chunk) => {
-      data.push(chunk);
-    })
-    .on('end', () => {
-      if (data.length) {
-        const recievedData: any = JSON.parse(Buffer.concat(data).toString());
+            return;
+          }
 
-        if (isNewUser(recievedData)) {
-          const newUser = { id: generateUUID(), ...recievedData };
-          users.push(newUser);
+          if (isNewUser(recievedData)) {
+            const newUser = { id: generateUUID(), ...recievedData };
+            users.push(newUser);
 
-          res.writeHead(201, { 'Content-Type': 'application/json' });
-          res.end(JSON.stringify(newUser));
+            res.writeHead(201, { 'Content-Type': 'application/json' });
+
+            res.end(JSON.stringify(newUser));
+          } else {
+            invalidDataErrorHandler(res, false);
+          }
         } else {
-          invalidDataErrorHandler(res, false);
+          invalidDataErrorHandler(res, true);
         }
-      } else {
-        invalidDataErrorHandler(res, true);
-      }
-    });
+      });
+  } else {
+    invalidRequestUrlErrorHandler(req, res);
+  }
 }

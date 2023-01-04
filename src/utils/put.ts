@@ -32,7 +32,7 @@ export function put(
 
   const selectedUserIndex = findUserIndex(id);
 
-  if (!selectedUserIndex) {
+  if (selectedUserIndex === undefined) {
     notFoundErrorHandler(res, id);
 
     return;
@@ -46,12 +46,21 @@ export function put(
     })
     .on('end', () => {
       if (data.length) {
-        const recievedData: any = JSON.parse(Buffer.concat(data).toString());
+        let recievedData: any;
+
+        try {
+          recievedData = JSON.parse(Buffer.concat(data).toString());
+        } catch {
+          invalidDataErrorHandler(res, false);
+
+          return;
+        }
 
         if (isUserProps(recievedData)) {
           users[selectedUserIndex] = { ...users[selectedUserIndex], ...recievedData };
 
           res.writeHead(200, { 'Content-Type': 'application/json' });
+
           res.end(JSON.stringify(users[selectedUserIndex]));
         } else {
           invalidDataErrorHandler(res, false);
