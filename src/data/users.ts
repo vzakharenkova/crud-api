@@ -7,11 +7,4 @@ export interface User {
   hobbies: string[] | [];
 }
 
-export const users: User[] = [
-  {
-    id: generateUUID(),
-    username: 'Tom',
-    age: 30,
-    hobbies: ['swimming'],
-  },
-];
+export const users: User[] = [];
