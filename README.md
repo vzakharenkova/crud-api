@@ -43,3 +43,10 @@ npm install
   - `hobbies` — user's hobbies **(array of strings or empty array, required)**
 - To create a new user you should pass the body (object) with `username`, `age` **and** `hobbies` according the type of data mentioned above.
 - To update an existing user pass the body (object) with `username` **or (and)** `age` **or (and)** `hobbies` according the type of data mentioned above.
+
+## Testing
+- Run tests (**note**: the app must be already run)
+   ```
+  npm run test
+  ```
+- [Jest](https://jestjs.io/) and [Supertest](https://www.npmjs.com/package/supertest) are used for testing
