@@ -6,10 +6,11 @@ import * as dotenv from 'dotenv';
 import { createNewServer } from './modules/server.js';
 import { User, users } from './data/users.js';
 import { updateUsers } from './utils/user.js';
+import { URL_PARAM } from './utils/shared.js';
 
 dotenv.config();
 
-const PORT = Number(process.env.PORT) || 4000;
+const PORT = Number(process.env.PORT) || URL_PARAM.PORT;
 
 if (process.env.NODE_ENV !== 'multi') {
   createNewServer(PORT);
@@ -38,3 +39,12 @@ if (process.env.NODE_ENV !== 'multi') {
     createNewServer(port);
   }
 }
+
+process.once('SIGUSR2', function () {
+  process.kill(process.pid, 'SIGUSR2');
+});
+
+process.on('SIGINT', function () {
+  // this is only called on ctrl+c, not restart
+  process.kill(process.pid, 'SIGINT');
+});

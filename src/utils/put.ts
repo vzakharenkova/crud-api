@@ -7,7 +7,9 @@ import {
   invalidRequestUrlErrorHandler,
   invalidUserIdErrorHandler,
   notFoundErrorHandler,
+  serverErrorHandler,
 } from './errors.js';
+import { CONTENT_TYPE, STATUSE_CODE } from './shared.js';
 import { findUserIndex, isUserProps } from './user.js';
 import { checkIfValidUUID } from './uuid.js';
 
@@ -43,36 +45,44 @@ export function put(
 
   req
     .on('data', (chunk) => {
-      data.push(chunk);
+      try {
+        data.push(chunk);
+      } catch {
+        serverErrorHandler(req, res);
+      }
     })
     .on('end', () => {
-      if (data.length) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let recievedData: any;
+      try {
+        if (data.length) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          let recievedData: any;
 
-        try {
-          recievedData = JSON.parse(Buffer.concat(data).toString());
-        } catch {
-          invalidDataErrorHandler(res, false);
+          try {
+            recievedData = JSON.parse(Buffer.concat(data).toString());
+          } catch {
+            invalidDataErrorHandler(res, false);
 
-          return;
-        }
+            return;
+          }
 
-        if (isUserProps(recievedData)) {
-          users[selectedUserIndex] = { ...users[selectedUserIndex], ...recievedData };
+          if (isUserProps(recievedData)) {
+            users[selectedUserIndex] = { ...users[selectedUserIndex], ...recievedData };
 
-          res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.writeHead(STATUSE_CODE.OK, CONTENT_TYPE.JSON);
 
-          res.end(JSON.stringify(users[selectedUserIndex]));
+            res.end(JSON.stringify(users[selectedUserIndex]));
 
-          if (process.send && cluster.worker) {
-            cluster.worker.send(users);
+            if (process.send && cluster.worker) {
+              cluster.worker.send(users);
+            }
+          } else {
+            invalidDataErrorHandler(res, false);
           }
         } else {
-          invalidDataErrorHandler(res, false);
+          invalidDataErrorHandler(res, true);
         }
-      } else {
-        invalidDataErrorHandler(res, true);
+      } catch {
+        serverErrorHandler(req, res);
       }
     });
 }

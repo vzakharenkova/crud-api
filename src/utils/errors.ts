@@ -1,5 +1,7 @@
 import http from 'http';
 
+import { CONTENT_TYPE, STATUSE_CODE } from './shared.js';
+
 export function invalidDataErrorHandler(
   res: http.ServerResponse<http.IncomingMessage> & {
     req: http.IncomingMessage;
@@ -14,7 +16,7 @@ export function invalidDataErrorHandler(
     msg = 'PASSED DATA IS NOT VALID!';
   }
 
-  res.writeHead(400, msg, { 'Content-Type': 'text/plain' });
+  res.writeHead(STATUSE_CODE.BAD_REQUEST, msg, CONTENT_TYPE.TEXT);
   res.end(res.statusMessage);
 }
 
@@ -24,7 +26,7 @@ export function notFoundErrorHandler(
   },
   userId: string,
 ) {
-  res.writeHead(404, `USER WITH ID ${userId} IS NOT FOUND!`, { 'Content-Type': 'text/plain' });
+  res.writeHead(STATUSE_CODE.NOT_FOUND, `USER WITH ID ${userId} IS NOT FOUND!`, CONTENT_TYPE.TEXT);
   res.end(res.statusMessage);
 }
 
@@ -34,7 +36,7 @@ export function invalidUserIdErrorHandler(
   },
   id: string,
 ) {
-  res.writeHead(400, `ID ${id} IS NOT VALID!`, { 'Content-Type': 'text/plain' });
+  res.writeHead(STATUSE_CODE.BAD_REQUEST, `ID ${id} IS NOT VALID!`, CONTENT_TYPE.TEXT);
   res.end(res.statusMessage);
 }
 
@@ -44,6 +46,17 @@ export function invalidRequestUrlErrorHandler(
     req: http.IncomingMessage;
   },
 ) {
-  res.writeHead(404, `CANNOT ${req.method} ${req.url}`, { 'Content-Type': 'text/plain' });
+  res.writeHead(STATUSE_CODE.NOT_FOUND, `CANNOT ${req.method} ${req.url}`, CONTENT_TYPE.TEXT);
+  res.end(res.statusMessage);
+}
+
+export function serverErrorHandler(
+  req: http.IncomingMessage,
+  res: http.ServerResponse<http.IncomingMessage> & {
+    req: http.IncomingMessage;
+  },
+) {
+  res.writeHead(STATUSE_CODE.INTERNAL_SERVER_ERROR, 'Internal Server Error', CONTENT_TYPE.TEXT);
+
   res.end(res.statusMessage);
 }

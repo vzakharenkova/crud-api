@@ -6,8 +6,8 @@ import {
   invalidUserIdErrorHandler,
   notFoundErrorHandler,
 } from './errors.js';
+import { CONTENT_TYPE, STATUSE_CODE } from './shared.js';
 import { findUserIndex } from './user.js';
-
 import { checkIfValidUUID } from './uuid.js';
 
 export function get(
@@ -18,7 +18,7 @@ export function get(
 ) {
   switch (true) {
     case req.url === '/api/users': {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.writeHead(STATUSE_CODE.OK, CONTENT_TYPE.JSON);
 
       res.end(JSON.stringify(users));
 
@@ -37,7 +37,7 @@ export function get(
       const userIndex = findUserIndex(id);
 
       if (typeof userIndex === 'number') {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(200, CONTENT_TYPE.JSON);
 
         res.end(JSON.stringify(users[userIndex]));
       } else {
@@ -49,11 +49,11 @@ export function get(
 
     case process.env.NODE_ENV === 'multi' && req.url === '/api': {
       if (users.length) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.writeHead(STATUSE_CODE.OK, CONTENT_TYPE.JSON);
 
         res.end(JSON.stringify(users[users.length - 1]));
       } else {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.writeHead(STATUSE_CODE.NOT_FOUND, CONTENT_TYPE.TEXT);
 
         res.end('THERE ARE NO USERS!');
       }

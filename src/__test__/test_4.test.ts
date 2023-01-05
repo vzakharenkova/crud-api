@@ -1,8 +1,9 @@
 import { describe, test, expect } from '@jest/globals';
 import supertest from 'supertest';
 import { User } from '../data/users';
+import { URL_PARAM } from '../utils/shared';
 
-const baseUrl = `http://localhost:${process.env.PORT || 4000}`;
+const baseUrl = `http://localhost:${process.env.PORT || URL_PARAM.PORT}`;
 
 const invalidEndpoint = '/invalid/endpoint';
 

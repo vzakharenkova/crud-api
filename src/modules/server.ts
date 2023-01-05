@@ -1,9 +1,11 @@
 import { createServer } from 'http';
+import { serverErrorHandler } from '../utils/errors.js';
 
+import { CONTENT_TYPE, STATUSE_CODE, URL_PARAM } from '../utils/shared.js';
 import { createLoadBalancer } from './loadBalancer.js';
 import { ServerService } from './serverService.js';
 
-const HOST = process.env.HOST || 'localhost';
+const HOST = process.env.HOST || URL_PARAM.HOST;
 
 export function createNewServer(port: number) {
   const server = createServer();
@@ -37,17 +39,25 @@ export function createNewServer(port: number) {
             break;
           }
           default:
-            res.writeHead(400, 'No Response', { 'Content-Type': 'text/plain' });
+            res.writeHead(STATUSE_CODE.BAD_REQUEST, 'No Response', CONTENT_TYPE.TEXT);
 
             res.end(res.statusMessage);
         }
       } catch {
-        res.writeHead(500, 'Smth went wrong! Please try again!', { 'Content-Type': 'text/plain' });
-
-        res.end(res.statusMessage);
+        serverErrorHandler(req, res);
       }
     })
-    .on('error', (error) => console.log(error.message))
+    .on('error', (error) => {
+      if (error.message.includes('EADDRINUSE')) {
+        console.log(`Port ${port} is already in use!`);
+
+        process.exit();
+      } else {
+        console.log('Smth went wrong. Please try again!');
+
+        process.exit();
+      }
+    })
     .on('close', () => console.log('Goodbye!'));
 
   server.listen(port, HOST, () => console.log(`Server is running on http://${HOST}:${port}`));

@@ -2,7 +2,12 @@ import cluster from 'cluster';
 import http from 'http';
 
 import { users } from '../data/users.js';
-import { invalidDataErrorHandler, invalidRequestUrlErrorHandler } from './errors.js';
+import {
+  invalidDataErrorHandler,
+  invalidRequestUrlErrorHandler,
+  serverErrorHandler,
+} from './errors.js';
+import { CONTENT_TYPE, STATUSE_CODE } from './shared.js';
 import { isNewUser } from './user.js';
 import { generateUUID } from './uuid.js';
 
@@ -17,37 +22,45 @@ export function post(
 
     req
       .on('data', (chunk) => {
-        data.push(chunk);
+        try {
+          data.push(chunk);
+        } catch {
+          serverErrorHandler(req, res);
+        }
       })
       .on('end', () => {
-        if (data.length) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          let recievedData: any;
+        try {
+          if (data.length) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            let recievedData: any;
 
-          try {
-            recievedData = JSON.parse(Buffer.concat(data).toString());
-          } catch {
-            invalidDataErrorHandler(res, false);
+            try {
+              recievedData = JSON.parse(Buffer.concat(data).toString());
+            } catch {
+              invalidDataErrorHandler(res, false);
 
-            return;
-          }
+              return;
+            }
 
-          if (isNewUser(recievedData)) {
-            const newUser = { id: generateUUID(), ...recievedData };
-            users.push(newUser);
+            if (isNewUser(recievedData)) {
+              const newUser = { id: generateUUID(), ...recievedData };
+              users.push(newUser);
 
-            res.writeHead(201, { 'Content-Type': 'application/json' });
+              res.writeHead(STATUSE_CODE.CREATED, CONTENT_TYPE.JSON);
 
-            res.end(JSON.stringify(newUser));
+              res.end(JSON.stringify(newUser));
 
-            if (process.send && cluster.worker) {
-              cluster.worker.send(users);
+              if (process.send && cluster.worker) {
+                cluster.worker.send(users);
+              }
+            } else {
+              invalidDataErrorHandler(res, false);
             }
           } else {
-            invalidDataErrorHandler(res, false);
+            invalidDataErrorHandler(res, true);
           }
-        } else {
-          invalidDataErrorHandler(res, true);
+        } catch {
+          serverErrorHandler(req, res);
         }
       });
   } else {

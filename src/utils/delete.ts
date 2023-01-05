@@ -7,6 +7,7 @@ import {
   invalidUserIdErrorHandler,
   notFoundErrorHandler,
 } from './errors.js';
+import { CONTENT_TYPE, STATUSE_CODE } from './shared.js';
 import { findUserIndex } from './user.js';
 import { checkIfValidUUID } from './uuid.js';
 
@@ -20,7 +21,7 @@ export function deleteFn(
     if (users.length) {
       users.pop();
 
-      res.writeHead(204, { 'Content-Type': 'text/plain' });
+      res.writeHead(STATUSE_CODE.NO_CONTENT, CONTENT_TYPE.TEXT);
 
       res.end('USER IS SUCCESSFULLY DELETED!');
 
@@ -28,7 +29,7 @@ export function deleteFn(
         cluster.worker.send(users);
       }
     } else {
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
+      res.writeHead(STATUSE_CODE.NOT_FOUND, CONTENT_TYPE.TEXT);
 
       res.end('THERE ARE NO USERS!');
     }
@@ -55,7 +56,7 @@ export function deleteFn(
   if (userIndex !== undefined) {
     users.splice(userIndex, 1);
 
-    res.writeHead(204, { 'Content-Type': 'text/plain' });
+    res.writeHead(STATUSE_CODE.NO_CONTENT, CONTENT_TYPE.TEXT);
 
     res.end(`USER WITH ID ${id} IS SUCCESSFULLY DELETED!`);
 

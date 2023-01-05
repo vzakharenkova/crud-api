@@ -1,11 +1,12 @@
 import cluster from 'cluster';
 import http, { request } from 'http';
 import { cpus } from 'os';
+
 import { users } from '../data/users.js';
-
 import { invalidDataErrorHandler } from '../utils/errors.js';
+import { CONTENT_TYPE, STATUSE_CODE, URL_PARAM } from '../utils/shared.js';
 
-const PORT = Number(process.env.PORT) || 5000;
+const PORT = Number(process.env.PORT) || URL_PARAM.PORT;
 
 const HOST = process.env.HOST || 'localhost';
 
@@ -49,9 +50,7 @@ export function createLoadBalancer(
       }
     })
     .on('error', () => {
-      res.writeHead(500, 'Smth went wrong! Please try again!', {
-        'Content-Type': 'text/plain',
-      });
+      res.writeHead(STATUSE_CODE.INTERNAL_SERVER_ERROR, 'Internal Server Error', CONTENT_TYPE.TEXT);
 
       res.end(res.statusMessage);
     });
