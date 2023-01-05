@@ -9,33 +9,33 @@ const HOST = process.env.HOST || 'localhost';
 export function createNewServer(port: number) {
   const server = createServer();
 
+  const serverService = new ServerService();
+
   server
     .on('request', (req, res) => {
       if (process.env.NODE_ENV === 'multi' && port === Number(process.env.PORT)) {
         const db = users;
-        createLoadBalancer(req, res);
+        createLoadBalancer(req, res, db);
 
         return;
       }
 
-      const serverService = new ServerService(req, res);
-
       try {
         switch (req.method) {
           case 'GET': {
-            serverService.get();
+            serverService.get(req, res);
             break;
           }
           case 'POST': {
-            serverService.post();
+            serverService.post(req, res);
             break;
           }
           case 'PUT': {
-            serverService.put();
+            serverService.put(req, res);
             break;
           }
           case 'DELETE': {
-            serverService.delete();
+            serverService.delete(req, res);
             break;
           }
           default:

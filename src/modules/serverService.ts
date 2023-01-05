@@ -6,35 +6,43 @@ import { post } from '../utils/post.js';
 import { put } from '../utils/put.js';
 
 export class ServerService {
-  req: http.IncomingMessage;
-
-  res: http.ServerResponse<http.IncomingMessage> & {
-    req: http.IncomingMessage;
-  };
-
-  constructor(
+  get(
     req: http.IncomingMessage,
+
     res: http.ServerResponse<http.IncomingMessage> & {
       req: http.IncomingMessage;
     },
   ) {
-    this.req = req;
-    this.res = res;
+    get(req, res);
   }
 
-  get() {
-    get(this.req, this.res);
+  post(
+    req: http.IncomingMessage,
+
+    res: http.ServerResponse<http.IncomingMessage> & {
+      req: http.IncomingMessage;
+    },
+  ) {
+    post(req, res);
   }
 
-  post() {
-    post(this.req, this.res);
+  put(
+    req: http.IncomingMessage,
+
+    res: http.ServerResponse<http.IncomingMessage> & {
+      req: http.IncomingMessage;
+    },
+  ) {
+    put(req, res);
   }
 
-  put() {
-    put(this.req, this.res);
-  }
+  delete(
+    req: http.IncomingMessage,
 
-  delete() {
-    deleteFn(this.req, this.res);
+    res: http.ServerResponse<http.IncomingMessage> & {
+      req: http.IncomingMessage;
+    },
+  ) {
+    deleteFn(req, res);
   }
 }
