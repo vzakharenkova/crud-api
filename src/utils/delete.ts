@@ -1,3 +1,4 @@
+import cluster from 'cluster';
 import http from 'http';
 
 import { users } from '../data/users.js';
@@ -17,9 +18,15 @@ export function deleteFn(
 ) {
   if (process.env.NODE_ENV === 'multi' && req.url === '/api') {
     if (users.length) {
+      users.pop();
+
       res.writeHead(204, { 'Content-Type': 'text/plain' });
 
       res.end('USER IS SUCCESSFULLY DELETED!');
+
+      if (process.send && cluster.worker) {
+        cluster.worker.send(users);
+      }
     } else {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
 
@@ -51,6 +58,10 @@ export function deleteFn(
     res.writeHead(204, { 'Content-Type': 'text/plain' });
 
     res.end(`USER WITH ID ${id} IS SUCCESSFULLY DELETED!`);
+
+    if (process.send && cluster.worker) {
+      cluster.worker.send(users);
+    }
   } else {
     notFoundErrorHandler(res, id);
   }

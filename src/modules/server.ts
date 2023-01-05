@@ -1,5 +1,4 @@
 import { createServer } from 'http';
-import { users } from '../data/users.js';
 
 import { createLoadBalancer } from './loadBalancer.js';
 import { ServerService } from './serverService.js';
@@ -14,8 +13,7 @@ export function createNewServer(port: number) {
   server
     .on('request', (req, res) => {
       if (process.env.NODE_ENV === 'multi' && port === Number(process.env.PORT)) {
-        const db = users;
-        createLoadBalancer(req, res, db);
+        createLoadBalancer(req, res);
 
         return;
       }

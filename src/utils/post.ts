@@ -1,3 +1,4 @@
+import cluster from 'cluster';
 import http from 'http';
 
 import { users } from '../data/users.js';
@@ -20,6 +21,7 @@ export function post(
       })
       .on('end', () => {
         if (data.length) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           let recievedData: any;
 
           try {
@@ -37,6 +39,10 @@ export function post(
             res.writeHead(201, { 'Content-Type': 'application/json' });
 
             res.end(JSON.stringify(newUser));
+
+            if (process.send && cluster.worker) {
+              cluster.worker.send(users);
+            }
           } else {
             invalidDataErrorHandler(res, false);
           }

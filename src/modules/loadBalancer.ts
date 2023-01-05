@@ -1,9 +1,12 @@
+import cluster from 'cluster';
 import http, { request } from 'http';
 import { cpus } from 'os';
+import { users } from '../data/users.js';
 
 import { invalidDataErrorHandler } from '../utils/errors.js';
 
-const PORT = Number(process.env.PORT) || 4000;
+const PORT = Number(process.env.PORT) || 5000;
+
 const HOST = process.env.HOST || 'localhost';
 
 let counter = 0;
@@ -15,6 +18,16 @@ export function createLoadBalancer(
   },
 ) {
   const bodyData: Buffer[] = [];
+
+  if (cluster.workers) {
+    const workers = Object.values(cluster.workers);
+
+    for (const worker of workers) {
+      if (worker) {
+        worker.send(users);
+      }
+    }
+  }
 
   req
     .on('data', (chunk) => {
@@ -45,7 +58,7 @@ export function createLoadBalancer(
 
   counter++;
 
-  if (counter === cpus().length) {
+  if (counter > cpus().length) {
     counter = 1;
   }
 

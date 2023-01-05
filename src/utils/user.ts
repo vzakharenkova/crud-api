@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { User, users } from '../data/users.js';
 import { checkIfValidUUID } from './uuid.js';
 
@@ -53,4 +54,9 @@ export function findUserIndex(userId: string) {
   });
 
   return index;
+}
+
+export function updateUsers(currentData: User[], newData: User[]) {
+  currentData.length = 0;
+  newData.forEach((user) => currentData.push(user));
 }
