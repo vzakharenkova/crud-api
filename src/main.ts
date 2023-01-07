@@ -40,11 +40,11 @@ if (process.env.NODE_ENV !== 'multi') {
   }
 }
 
-process.once('SIGUSR2', function () {
-  process.kill(process.pid, 'SIGUSR2');
+process.on('SIGINT', function () {
+  console.log('Goodbye!');
 });
 
-process.on('SIGINT', function () {
-  // this is only called on ctrl+c, not restart
-  process.kill(process.pid, 'SIGINT');
-});
+// process.on('SIGTERM', function () {
+//   console.log('Receiving SIGINT signal in nodeJS.');
+//   process.exit(0);
+// });
