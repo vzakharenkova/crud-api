@@ -15,6 +15,7 @@ Simple CRUD API using in-memory database underneath for [RSSchool Node.js course
 cd CRUD-API
 npm install
 ```
+- Rename `.env_copy` file to `.env` to use environment variables.
 - Run the project in:
   - development mode
   ```
