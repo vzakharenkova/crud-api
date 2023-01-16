@@ -6,6 +6,10 @@ import { users } from '../data/users.js';
 import { invalidDataErrorHandler } from '../utils/errors.js';
 import { CONTENT_TYPE, STATUSE_CODE, URL_PARAM } from '../utils/shared.js';
 
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 const PORT = Number(process.env.PORT) || URL_PARAM.PORT;
 
 const HOST = process.env.HOST || 'localhost';

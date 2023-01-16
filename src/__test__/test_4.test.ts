@@ -3,6 +3,10 @@ import supertest from 'supertest';
 import { User } from '../data/users';
 import { URL_PARAM } from '../utils/shared';
 
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 const baseUrl = `http://localhost:${process.env.PORT || URL_PARAM.PORT}`;
 
 const invalidEndpoint = '/invalid/endpoint';

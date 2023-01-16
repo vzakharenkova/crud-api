@@ -4,6 +4,10 @@ import { User } from '../data/users';
 import { URL_PARAM } from '../utils/shared';
 import { isUser } from '../utils/user';
 
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 const baseUrl = `http://localhost:${process.env.PORT || URL_PARAM.PORT}`;
 
 const newUser: Omit<User, 'id'> = {

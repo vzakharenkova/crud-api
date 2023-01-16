@@ -5,6 +5,10 @@ import { User } from '../data/users';
 import { URL_PARAM } from '../utils/shared';
 import { generateUUID } from '../utils/uuid';
 
+import * as dotenv from 'dotenv';
+
+dotenv.config();
+
 const baseUrl = `http://localhost:${process.env.PORT || URL_PARAM.PORT}`;
 
 const notExistingId = generateUUID();
