@@ -13,6 +13,6 @@ export const CONTENT_TYPE = {
 };
 
 export enum URL_PARAM {
-  PORT = 9000,
+  PORT = 5000,
   HOST = 'localhost',
 }
