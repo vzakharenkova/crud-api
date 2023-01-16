@@ -41,10 +41,5 @@ if (process.env.NODE_ENV !== 'multi') {
 }
 
 process.on('SIGINT', function () {
-  console.log('Goodbye!');
+  process.exit();
 });
-
-// process.on('SIGTERM', function () {
-//   console.log('Receiving SIGINT signal in nodeJS.');
-//   process.exit(0);
-// });
